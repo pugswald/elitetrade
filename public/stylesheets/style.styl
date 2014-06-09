@@ -1,0 +1,261 @@
+body
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif
+  margin: 0
+  padding: 0
+  background-color: #ECE9EE
+noscript
+  text-align:center
+.quote
+  padding: 3px
+  font: 15px "Lucida Grande", Helvetica, Arial, sans-serif
+  //font-weight: bold
+  font-style: italic
+  //background-color: #7E7783
+  background-color: #FFFFFF
+  //color: white
+a
+  color: #00B7FF
+#wrap
+  width:850px
+  margin: 0 auto
+  background-color: #FFFFFF
+  border-radius: 6px
+h1
+  text-align:center
+  margin:5px 0 0 0
+.version
+  position:absolute
+  font-family:monospace
+  font-size:12px
+  color:red
+  margin-left:5px
+  top:20px
+  
+  
+h3
+  margin:0
+  padding:5px
+p
+  padding:10px
+  margin: 0
+#login-services
+  text-align:center
+#menu
+  padding: 0 5px
+  text-align:center
+  margin-bottom:5px
+.ui-menu
+  width: 200px
+#content
+  width:820px
+  background-color: #ECE9EE
+  margin: 0 10px
+  padding: 5px
+  border: 1px solid #7E7783
+  border-radius: 6px
+#footer
+  clear:both;
+  padding: 5px 0
+  text-align:center
+form
+  width:600px
+  margin:auto
+  line-height: 24px
+label
+  display:block
+  span
+    font-size:12px
+    padding-bottom:2px
+    display:block
+#send-btn
+  padding:5px
+#invite-friends
+  padding:5px
+textarea
+  width:600px
+  height:150px
+  .message
+    display:block
+
+#key-status
+  ul
+    list-style:none
+    padding:0
+  li
+    width:600px
+    height:30px
+    line-height:30px
+    padding-left:5px
+    margin: 0 10px 10px 10px
+    border: 1px solid #7E7783
+    border-radius: 3px
+  .good
+    background-color:#F0F8E6
+  .trouble
+    background-color:#FFFF99
+  .bad
+    background-color:#FF4D4D
+
+#password-dialog
+  div
+    display:block
+    //width:300px
+    white-space:nowrap
+#key-generation,#forget-me
+  p
+    width:400px
+
+#password-fields
+  text-align:center
+  input
+    display:block
+    width:200px
+    margin:0 auto
+.no-close .ui-dialog-titlebar-close
+  display: none
+
+.error
+  color:red
+  text-align:center
+
+li
+  list-style:none
+  text-align:center
+  padding:0
+  margin:5px 0
+#message-list
+  padding:0
+.message
+  position:relative
+  //list-style:none
+  //padding:0
+  //margin:5px 0
+  img
+    position:absolute
+    //top:50%
+    left:10px
+    //margin-top:-15px
+    top: 0
+    height:30px
+    width: 30px
+  .sender
+    position:absolute
+    //top: 50%
+    //margin:15px 0 0 0
+    top:35px
+    margin:0
+    font-size:10px
+    text-align: center
+    width: 50px
+    overflow: hidden
+  .message-block,.controls
+    padding:3px
+    margin-left:50px
+    //margin-right:40px
+    font-size:10px
+    white-space:pre
+    overflow-x:auto;
+    text-align:left;
+  .message-block
+    min-height:50px
+    border:1px solid black
+    border-radius:2px
+
+  .encrypted
+    background-color:#FFFF99
+  .plaintext
+    font-size:12px
+    background-color:#F0F8E6
+    display:none
+.controls
+  //line-height:26px
+  min-height:30px
+  position:relative
+  background-color:#FFFFFF
+  span
+    position: absolute
+    //right:0
+    top: 50%
+    margin: -13px 0 0 0
+  .expire-time
+    //display:table-cell
+    left: 50px
+    line-height:26px
+    vertical-align:middle
+  .lock-toggle
+    //position: absolute
+    //right:0
+    //top: 50%
+    //margin: -13px 0 0 0
+    left:5px
+    display:inline-block
+    height:26px
+    width: 36px
+    background-repeat:no-repeat
+    background-position:center center
+  .locked
+    //background-size:25px 25px
+    background-size:36px 15px
+    background-image:url('/images/key.svg')// 1253x518
+    //background-image:url('/images/lock_closed.svg')// 171x171
+  .unlocked
+    //background-size:31px 25px
+    background-size:26px 26px
+    //background-image:url('/images/lock_open.svg') // 235x189
+    background-image:url('/images/lock_closed.svg')// 171x171
+  .unreadable
+    background-size:26px 26px
+    background-image:url('/images/unreadable.svg')// 213x213
+  .reply
+    left:150px
+    display:inline-block
+    height:26px
+    width:26px
+    background-repeat:no-repeat
+    background-size:26px 26px
+    background-image:url('/images/reply.svg')// 64x64
+  .delete-icon
+    right:5px
+    display:inline-block
+    height:26px
+    width:26px
+    background-repeat:no-repeat
+    background-size:26px 26px
+    background-image:url('/images/delete.svg')// 64x64
+
+// Style send message form
+#message-form
+  input,span
+    display:inline
+#expire-slider
+  margin-bottom:10px
+#selected-friends
+  margin:3px 0
+  padding:3px
+  border: 1px solid #7E7783
+  background-color:#FFFFFF
+  border-radius: 3px
+  min-height: 25px
+  .friend
+    position:relative
+    display:inline-block
+    background-color:#ECE9EE
+    border: 1px solid #7E7783
+    border-radius: 3px
+    height:30px
+    line-height:30px
+    margin:0 3px 3px 0
+    //vertical-align:center
+    //vertical-align: text-bottom
+    img
+      //display: inline-block
+      height: 22px
+      width: 22px
+      padding:0 3px
+      margin:0
+      vertical-align:text-bottom
+    .remove-friend
+      padding:0 3px
+      font-weight:bold
+      display:inline-block
+      

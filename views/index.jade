@@ -1,0 +1,50 @@
+extends layout
+
+block scripts
+  script var userId="#{userId}";
+  script(src='//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js')
+  script(src='//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js')
+  script(src='/static/jquery.form.min.js')
+  script(src='/javascripts/main.js')
+block content
+  form
+    div#menu
+      input(type="radio",id="enter-menu",name="menu",value="#enter-trade")
+      label(for="enter-menu") Enter Trade
+      input(type="radio",id="find-menu",name="menu",value="#find-route")
+      label(for="find-menu") Find Route
+      input(type="radio",id="view-menu",name="menu",value="#view-trades")
+      label(for="view-menu") View Trades
+      input(type="radio",id="logout-menu",name="menu",value="#logout")
+      if userId
+        label(for="logout-menu") Log Out
+      else
+        label(for="logout-menu") Log In
+      input(type="radio",id="about-menu",name="menu",value="#about")
+      label(for="about-menu") About Us
+    div#enter-trade
+      label
+        span Station
+        input#station
+      label
+        span Commodity
+        input#commodity
+      label
+        span Amount
+        input#amount
+      label
+        span Price Each
+        input#price
+      input(type="radio",name="action",value="buy",selected)
+      input(type="radio",name="action",value="sell")
+      button(type="submit") Enter Trade
+
+    div#view-trades(style="display:none;")
+      Various controls, filters, ability to delete
+      
+    div#find-route(style="display:none;")
+      Look for next trade based on historical data
+
+    div#about(style="display:none;")
+      include about
+
