@@ -14,7 +14,7 @@ var StationSchema = Schema({
     },
     system: String,
     commodities:[{
-      commodity: ObjectId,
+      commodity: { type: ObjectId, ref: 'CommodityModel'},
       demand: String,
       supply: String,
       lastBuy: Number,

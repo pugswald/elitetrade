@@ -1,7 +1,12 @@
+html
+  height: 100%
 body
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif
   margin: 0
   padding: 0
+  height: 100%
+  min-height: 100%
+  overflow: hidden
   background-color: #ECE9EE
 noscript
   text-align:center
@@ -17,9 +22,11 @@ a
   color: #00B7FF
 #wrap
   width:850px
-  margin: 0 auto
+  margin: 50px auto
   background-color: #FFFFFF
   border-radius: 6px
+  height: 100%
+  position: relative
 h1
   text-align:center
   margin:5px 0 0 0
@@ -43,22 +50,25 @@ p
 #menu
   padding: 0 5px
   text-align:center
-  margin-bottom:5px
+  margin-bottom:10px
 .ui-menu
   width: 200px
 #content
-  width:820px
+  width:800px
   background-color: #ECE9EE
   margin: 0 10px
   padding: 5px
   border: 1px solid #7E7783
   border-radius: 6px
 #footer
-  clear:both;
+  position: absolute
+  bottom: 0
+  width: 100%
+  //clear:both;
   padding: 5px 0
   text-align:center
 form
-  width:600px
+  width:830px
   margin:auto
   line-height: 24px
 label
@@ -69,6 +79,15 @@ label
     display:block
 #send-btn
   padding:5px
+  
+#enter-trade table
+  padding: 0 10px
+  background-color: #ECE9EE
+  margin-left:auto;
+  margin-right:auto;
+  td
+    text-align:center
+
 #invite-friends
   padding:5px
 textarea

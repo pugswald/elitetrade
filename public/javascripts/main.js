@@ -1,84 +1,7 @@
-// Fourth social scripting
-
-// The unencrypted private key is stored as a window variable as there is
-// no easy way to store it in localStorage.  Too many objects within 
-// objects to unserialize without a lot of work.
-var pk_clear = null; // TODO move into a class
-var user = null; // TODO move into a class
-var decrypting = false; // TODO move into event handling
+// Elite trader scripting
 $( init );
 
 function init(){
-  if ((!window.crypto) || (!window.crypto.getRandomValues)) {
-    // TODO: Error message for user 
-    var err_dialog = $('<div>');
-    err_dialog.attr('title','Incompatible Browser');
-    err_dialog.append('<p>Your broswer does not support the required functions'+
-    'for encryption.  Please install the latest Chrome, Firefox, or Safari browser</p>');
-    $('body').append(err_dialog);
-    err_dialog.dialog({
-      dialogClass:"no-close",
-      modal: true,
-      resizable: false,
-      draggable: false,
-      autoOpen: true,
-      closeOnEscape: false,
-      width: 'auto'
-    });
-    return;  // Don't let the code throw a bunch of errors on crypto.
-  }
-  // Create the password dialog
-  $("#password-dialog").dialog({
-    modal: true,
-    resizable: false,
-    autoOpen: false,
-    width: 'auto',
-    buttons: {
-      Ok: function(){
-        attemptKeyDecrypt();
-      },
-      Cancel: function(){
-        $(this).dialog("close");
-      }
-    }
-  });
-  // Create the key generation dialog
-  $("#key-generation").dialog({
-    modal: true,
-    resizable: false,
-    autoOpen: false,
-    width: 'auto',
-    buttons: {
-      Ok: function(){
-        // TODO: Test passwords match
-        var p1=$("input[name='pass1']").val();
-        var p2=$("input[name='pass2']").val();
-        if (p1 != p2){
-          $("#key-generation-error").text('Passwords do not match');
-        }else if (p1 == "") {
-          $("#key-generation-error").text('Password cannot be blank');
-        } else {
-          $("#key-generation-error").text('');
-          window.sessionStorage.setItem('privatekeypass',$("input[name='pass1']").val());
-          setTimeout(generateKeypair,50);
-          $('#key-generation').dialog('close');
-        }
-      },
-      Cancel: function(){
-        $('#key-generation').dialog('close');
-      }
-    }
-  });
-  // Create the key decryption dialog
-  $("#key-decrypt").dialog({
-    dialogClass:"no-close",
-    modal: true,
-    resizable: false,
-    draggable: false,
-    autoOpen: false,
-    closeOnEscape: false,
-    width: 'auto'
-  });
   $('#message-sent-dialog').dialog({
     modal: true,
     resizable: false,
@@ -91,6 +14,7 @@ function init(){
       $('#selected-friends').children().remove();
     }
   });
+  // Could be useful for use instead of trade datestamps
   var expire_fmt = function(expire){
     var exp_msg ='';
     var days = Math.floor(expire/24);
@@ -101,17 +25,12 @@ function init(){
     if (hours > 1) exp_msg = exp_msg+'s';
     $("#expire-hours").text(exp_msg);
   };
-  $('#expire-slider').slider({
-    range: "min",
-    value: 24,
-    min: 1,
-    max: 24*7,
-    slide: function(event,ui){ 
-      expire_fmt(ui.value);
-    }
-  });
-  expire_fmt($('#expire-slider').slider('value'));
-  // Create the password dialog
+  
+  
+  
+  
+  
+ // Create the password dialog
   $("#forget-me").dialog({
     modal: true,
     resizable: false,
@@ -136,20 +55,7 @@ function init(){
   // Convert buttons to jquery ui button objects
   $("button").button();
   // Bind add all friends to an action
-  $("#add-all-friends").click(function(e){
-    e.preventDefault();
-    // Remove existing friends
-    $('#selected-friends').children().remove();
-    // All all friends with pubkeys
-    if (user){
-      user.friends.forEach(function(friend){
-        if (friend.public_key){
-          addFriend(friend);
-          //$('#selected-friends').append('<div class="friend" id="'+friend.fb_id+'"><img src="https://graph.facebook.com/'+friend.fb_id+'/picture?type=square">'+friend.name+'<div class="remove-friend">x</div></div>');
-        }
-      });
-    }
-  });
+
   // Initialize the friend autocomplete
   $('#friend-autoselect').autocomplete({
     minLength:0,
@@ -209,12 +115,12 @@ function init(){
   // Get the theme rolling
   $('#menu').buttonset();
   // Kick off the message load in the background
-  setTimeout(loadMessages,20);
-  openpgp.init();
+  //setTimeout(loadMessages,20);
+  //openpgp.init();
   // Populate key-management content
-  updateKeyManagement(true);
+  //updateKeyManagement(true);
   // Unlock the key or display dialog required
-  unlockKey();
+  //unlockKey();
   // Set up event handlers for task buttons
   $('#menu').change(function(e){
     //console.log('change happens');
@@ -229,201 +135,12 @@ function init(){
   });
   // Send message form binding
   $('#message-form').submit(sendMessage);
-  selectPane('#messages');
+  selectPane('#find-route');
   // Kick off expire loop
   updateExpireLoop();
   $('#page').fadeIn(1000);
 }
 
-function unlockKey(){
-  if (pk_clear){
-    //Done
-    return;
-  }
-  // Set the pane needed to unlock the key
-  if (! openpgp.keyring.hasPrivateKey()){
-    // TODO - go straight to password picking for new key
-    selectPane('#key-management');
-  } else {
-    // Start unlocking private
-    var pk_pass = window.sessionStorage.getItem("privatekeypass");
-    if (pk_pass != null){
-      //$("#key-decrypt").dialog('open');
-      decryptPrivateKey();
-    } else {
-      $("#password-dialog").dialog('open');
-    }
-  }
-}
-
-function updateKeyManagement(update_user){
-  // Update the key management section based on server-stored keypairs,
-  // Compare to what's in local and session storage
-  
-  var keys=openpgp.keyring;
-  if (update_user){
-    // Attempt to pull in personal keys from server
-    $.ajax({url:'/user',async:false,type:'get',dataType:'json',success: function(e){
-      //console.log('Loading user data');
-      //console.log(e);
-      user = e.data;
-      // TODO: Update public keys, create top level hash of public keys to friends
-      if (user.private_key){
-        if (keys.hasPrivateKey()){
-          var pk = keys.exportPrivateKey(0);
-          if (pk.armored != user.private_key){
-            // TODO: If keyring has keys and they don't match keys in keyring, warn user 
-            //    and ask how they'd like to proceed.
-            //console.log('Keys do not match, ask user what to do');
-          }
-        } else {
-          // TODO: If keyring is empty and server has keys
-          //    Populate keyring with server results
-          //console.log('Use case not implemented');
-          //console.log('Import keys from server');
-          $("#password-dialog").dialog('open');
-          //keys.importPrivateKey(user.private_key,pk_pass);// TODO pkpass!
-        }
-      } else if (keys.hasPrivateKey()){
-        var pk = keys.exportPrivateKey(0);
-        // Odd happening if user id is different than private key, can get into
-        // this state on user data purge of database
-        if (userId != pk.obj.userIds[0].text){
-          //console.log('User ids of logged in user and pk do not match, purge the keyring');
-          purgeKeyring();
-          //console.log('First timer');
-          $('#welcome-message').show();
-          $('#overwrite-warning').hide();
-          $('#key-generation').dialog('open');
-
-          //updateKeyManagement(false); // Recursion hmmmm
-          return;
-        }
-        var pubkey_dict = getPublicKeysForUserIds([userId]);
-        //console.log(pubkey_dict);
-        // If keyring is populated and server has no keys, send keypair
-        $.ajax({url:'/user',type:'post',dataType:'json',data:{private_key:keys.exportPrivateKey(0).armored,public_key:pubkey_dict[userId].armored},
-          success: function(e){
-            if (e.success == true){
-              //console.log('Successfuly stored key information');
-              //console.log(e);
-              user = e.data;
-              unlockKey();
-              updateKeyManagement(false);
-              //loadMessages();
-            }
-          }
-        });
-      } else {
-        // No keys anywhere for this user, start up the new keygenerator dialog
-        //console.log('First timer');
-        $('#welcome-message').show();
-        $('#overwrite-warning').hide();
-        $('#key-generation').dialog('open');
-      }
-    }}); // TODO: Failure of this call handled gracefully
-  }
-  // Personal private
-  if (pk_clear != null) {
-    //console.log(pk_clear);
-    //console.log($('#unlock-btn'));
-    $('#unlock-btn').button('disable');
-    $('#private-key-status').removeClass().addClass('good');
-    $('#private-key-status').html('Private key unlocked for user: '+pk_clear.userIds[0].text+
-      ' ID: '+toHex(pk_clear.getKeyId()));
-    $('#send-btn').button('enable');
-  } else if (keys.hasPrivateKey()){
-    var pk = keys.exportPrivateKey(0);
-    //console.log(pk.obj.userIds[0].text); // How to get userid within the key
-    //console.log(pk.obj.extractPublicKey()); 
-    $('#private-key-status').removeClass().addClass('trouble');
-    $('#private-key-status').html('Private key locked for user: '+pk.obj.userIds[0].text+
-      ' ID: '+toHex(pk.obj.getKeyId()));
-    $('#unlock-btn').button('enable');
-    $('#send-btn').button('disable');
-  } else {
-    $('#private-key-status').removeClass().addClass('bad');
-    $('#private-key-status').html('Private key not found - create new keypair');
-    $('#unlock-btn').button('disable');
-    $('#send-btn').button('disable');
-  }
-
-  // Personal public
-  var pubkey_dict = getPublicKeysForUserIds([userId]);
-  if (userId in pubkey_dict){
-    // openpgp doesn't check if the public keys are already imported.  Must
-    // clean out the keyring of public keys
-    var pubkey = pubkey_dict[userId];
-    openpgp.keyring.publicKeys = [pubkey];
-    $('#public-key-status').removeClass().addClass('good');
-    $('#public-key-status').html('Personal public key for user: '+pubkey.obj.userIds[0].text+' ID: '+toHex(pubkey.obj.getKeyId()));
-  } else {
-    openpgp.keyring.publicKeys = [];
-    $('#public-key-status').removeClass().addClass('bad');
-    $('#public-key-status').html('Personal public key not found - create new keypair');
-  }
-  // Friends public        
-  var fk = 0;
-  //console.log('import user public keys');
-  //console.log(user);
-  for (var fi=0; fi<user.friends.length; ++fi){
-    var friend = user.friends[fi];
-    if (friend.public_key) {
-      openpgp.keyring.importPublicKey(friend.public_key);
-      fk++;
-    }
-  }
-  $('#friends-key-status').html(fk.toString()+' out of '+user.facebook_friend_count.toString()+' friends are on 4th social');
-  if (fk == user.facebook_friend_count){
-    $('#friends-key-status').removeClass().addClass('good');
-  } else if (fk == 0) {
-    $('#friends-key-status').removeClass().addClass('bad');
-  } else {
-    $('#friends-key-status').removeClass().addClass('trouble');
-  }
-  // TODO: Send invite to use 4th social to friends button
-  //selectPane('#key-management');
-
-}
-
-function generateKeypair(){
-  // Popup dialog warning about:
-  if (openpgp.keyring.hasPrivateKey()){
-    // This will replace your current key and delete all messages as they
-    // will be unreadable
-    //console.log('Overwriting existing key');
-    $('#key-overwrite-warning').dialog('open');
-  }
-  var pk_pass=window.sessionStorage.getItem('privatekeypass');
-  if (!pk_pass){
-    //console.log('Error: no password set for private key');
-    // TODO: Error dislog, maybe some kind of shared error popup
-    return false;
-  }
-  // This process can take upwards of a minute and cause your browser to
-  // think the scripts are hung.  Just be patient, you only have to do 
-  // this once.
-  $('#key-decrypt').dialog('open');
-  window.setTimeout(function (){
-    //console.log("Generating new keypair");
-    //console.log('pk_pass is '+pk_pass);
-    var key = openpgp.generate_key_pair(1, 1024, userId, pk_pass);
-    // Replace dialog with success, sending new key
-    //$('#key-management').append('<div>'+openpgp.read_publicKey(key.publicKeyArmored)+'</div>');
-    openpgp.keyring.importPrivateKey(key.privateKeyArmored,pk_pass);
-    openpgp.keyring.importPublicKey(key.publicKeyArmored);
-    openpgp.keyring.store();
-    // Private key is unusable until it is exported
-    //console.log('export from keyring');
-    pk_clear=openpgp.keyring.exportPrivateKey(0).obj;
-    //console.log(pk_clear);
-    updateKeyManagement(true); // Will send keys to server, unencrypt private key for window variable
-    // Close dialog
-    $('#key-decrypt').dialog('close');
-  },50);
-  
-  
-}
 
 // Sends a message to users
 // This will create multiple PUTs to /message, one for each recipient

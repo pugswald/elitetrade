@@ -6,13 +6,13 @@ var mongoose = require('mongoose'),
 * Schema
 */
 var TradeSchema = Schema({
-    system: ObjectId,
-    user: ObjectId,
-    commodity: ObjectId,
+    station: { type: ObjectId, ref: 'StationModel'},
+    user: { type: ObjectId, ref: 'UserModel'},
+    commodity: { type: ObjectId, ref: 'CommodityModel'},
     amount: { type: Number, min: 1, max: 1000 },
     price: Number,
     executed: { type: Date, default: Date.now },
-    downvotes: [ObjectId], // Way to tag bad trades, one per user allowed
+    downvotes: [{ type: ObjectId, ref: 'UserModel'}], // Way to tag bad trades, one per user allowed
     bought: Boolean // If bought is false, assume sold
 });
 

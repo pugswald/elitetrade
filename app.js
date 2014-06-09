@@ -8,10 +8,8 @@ var mycfg = require('./dev_cfg.js');
  */
 // TODO: switch for dev/production environments
 var express = require('express')
-//  , routes = require('./routes')
-//  , user = require('./routes/user')
-//  , https = require('https')
-  , http = require('http')
+  , https = require('https')
+//  , http = require('http')
   , path = require('path')
   , fs = require('fs')
   , everyauth = require('everyauth')
@@ -119,9 +117,10 @@ app.post('/user', user.user_post);
 app.delete('/user', user.user_delete);
 //app.get('/invite', user.user_invite);
 
-//https.createServer(mycfg.credentials,app).listen(app.get('port'), function(){
-//  console.log('Express server listening on port ' + app.get('port'));
-//});
-http.createServer(app).listen(app.get('port'), function(){
+https.createServer(mycfg.credentials,app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
 });
+/*http.createServer(app).listen(app.get('port'), function(){
+  console.log('Express server listening on port ' + app.get('port'));
+});
+*/

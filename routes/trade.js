@@ -5,7 +5,7 @@
 var mongoose = require('mongoose');
 var TradeModel = mongoose.model('TradeModel');
 var CommodityModel = mongoose.model('CommodityModel');
-var SystemModel = mongoose.model('StationModel');
+var StationModel = mongoose.model('StationModel');
 var UserModel = mongoose.model('UserModel');
 //var MAX_MESSAGE_LENGTH = 10000000;
 //var MAX_EXPIRATION_DAYS = 30; //days
@@ -96,12 +96,14 @@ exports.trade_put = function(req, res){
     return;
   } 
   // Data validation
-  if (! SystemModel.findOne( {_id:req.body.system})){
-    res.json({error:'Invalid system'});
+  var station = StationModel.findOne( {_id:req.body.station});
+  if (! station){
+    res.json({error:'Invalid station'});
     return;
   }
     //user: ObjectId,
-  if (! CommodityModel.findOne( {_id:req.body.commodity})){
+  var commodity = CommodityModel.findOne( {_id:req.body.commodity});
+  if (! commodity){
     res.json({error:'Invalid commodity'});
     return;
   }
@@ -121,9 +123,9 @@ exports.trade_put = function(req, res){
   if ( req.body.action == "sell" ) bought = false;
     
   var newtrade = new TradeModel({
-    system: req.body.system,
-    user: req.session.auth.userId,
-    commodity: req.body.commodity,
+    station: station,
+    user: req.session.auth.userId, // TODO: Need to get user?
+    commodity: commodity,
     amount: amount_clean,
     price: price_clean,
     //executed: { type: Date, default: Date.now }
