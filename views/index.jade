@@ -1,95 +1,110 @@
 extends layout
 
 block scripts
-  script var userId="#{userId}", is_admin="#{is_admin}";
-  script(src='//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js')
-  script(src='//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js')
-  script(src='/static/jquery.form.min.js')
-  script(src='/javascripts/main.js')
+    script var userId="#{userId}", is_admin="#{is_admin}";
+    script(src='//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js')
+    script(src='//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js')
+    script(src='//cdn.datatables.net/1.10.0/js/jquery.dataTables.js')
+    script(src='/static/jquery.form.min.js')
+    script(src='/javascripts/main.js')
 block content
-  form
-    div#menu
-      if is_admin
-        input(type="radio",id="sa-menu",name="menu",value="#station-admin")
-        label(for="sa-menu") Station Admin
-      input(type="radio",id="find-menu",name="menu",value="#find-route")
-      label(for="find-menu") Find Route
-      input(type="radio",id="view-menu",name="menu",value="#view-trades")
-      label(for="view-menu") View Trades
-      if userId
-        input(type="radio",id="enter-menu",name="menu",value="#enter-trade")
-        label(for="enter-menu") Enter Trade
-        input(type="radio",id="logout-menu",name="menu",value="#logout")
-        label(for="logout-menu") Log Out
-      else
-        input(type="radio",id="login-menu",name="menu",value="#login")
-        label(for="login-menu") Log In
-      input(type="radio",id="about-menu",name="menu",value="#about")
-      label(for="about-menu") About Us
+    form
+        div#menu
+            if is_admin
+                input(type="radio",id="sa-menu",name="menu",value="#station-admin")
+                label(for="sa-menu") Station Admin
+            input(type="radio",id="find-menu",name="menu",value="#find-route")
+            label(for="find-menu") Find Route
+            input(type="radio",id="view-menu",name="menu",value="#view-trades")
+            label(for="view-menu") View Trades
+            if userId
+                input(type="radio",id="enter-menu",name="menu",value="#enter-trade")
+                label(for="enter-menu") Enter Trade
+                input(type="radio",id="logout-menu",name="menu",value="#logout")
+                label(for="logout-menu") Log Out
+            else
+                input(type="radio",id="login-menu",name="menu",value="#login")
+                label(for="login-menu") Log In
+            input(type="radio",id="about-menu",name="menu",value="#about")
+            label(for="about-menu") About
     div#content
-      div#enter-trade(style="display:none;")
-        table
-          tr
-            th Station
-            th Commodity
-            th Amount
-            th Price Each
-            th Bought
-            th Sold
-          tr
-            td 
-              input#station
-            td 
-              input#commodity
-            td 
-              input#amount(size="5")
-            td
-              input#price(size="5")
-            td
-              input(type="radio",name="action",value="bought",checked)
-            td
-              input(type="radio",name="action",value="sold")
-          tr
-            td(colspan="6")
-              button(type="submit") Enter Trade
+        div#enter-trade(style="display:none;")
+            form#trade-form
+                table
+                    tr
+                        th Station
+                        th Commodity
+                        th Amount
+                        th Price Each
+                        th Bought
+                        th Sold
+                    tr
+                        td 
+                            input(name="station")
+                        td 
+                            input#commodity
+                        td 
+                            input#amount(size="5")
+                        td
+                            input#price(size="5")
+                        td
+                            input(type="radio",name="action",value="bought",checked)
+                        td
+                            input(type="radio",name="action",value="sold")
+                    tr
+                        td(colspan="6")
+                            button(type="submit") Enter Trade
         
 
-      div#view-trades(style="display:none;")
-        Various controls, filters, ability to delete
+        div#view-trades(style="display:none;")
+            Various controls, filters, ability to delete
         
-      div#find-route(style="display:none;")
-        Look for next trade based on historical data
+        div#find-route(style="display:none;")
+            Look for next trade based on historical data
 
-      div#login(style="display:none;")
-        h3 To get started, sign in with one of the follwing services:
-        div#login-services
-          a(href='auth/facebook').btn-auth.btn-facebook.large Sign in with Facebook
+        div#login(style="display:none;")
+            h3 To get started, sign in with one of the follwing services:
+            div#login-services
+                a(href='auth/facebook').btn-auth.btn-facebook.large Sign in with Facebook
 
-      div#about(style="display:none;")
-        include about
+        div#about(style="display:none;")
+            include about
 
-      div#station-admin(style="display:none;")
-        table
-          tr
-            th Name
-            th System
-            th X
-            th Y
-            th Z
-            th Commodities
-          tr
-            td 
-              input#station-name
-            td 
-              input#system
-            td 
-              input#x(size="5")
-            td
-              input#y(size="5")
-            td
-              input#z(size="5")
-            td
-              TBD
-          tr
-            td(colspan="6")
-              button(type="submit") Commit Changes
+        if is_admin
+            div#station-admin(style="display:none;")
+                form#station-form
+                    table
+                        tr
+                            th Name
+                            th System
+                            th X
+                            th Y
+                            th Z
+                            th Commodities
+                        tr
+                            td 
+                                input(name="name")
+                            td 
+                                input(name="system")
+                            td 
+                                input(name="x",size="5")
+                            td
+                                input(name="y",size="5")
+                            td
+                                input(name="z",size="5")
+                            td
+                                TBD
+                        tr
+                            td(colspan="6")
+                                button(type="submit") Create Station
+                                button(type="submit") Commit Changes
+                                button(type="submit") Delete Station
+                table#station-list
+                    thead
+                        tr
+                            th Name
+                            th System
+                            th X
+                            th Y
+                            th Z
+                            th Commodities

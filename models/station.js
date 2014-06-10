@@ -10,7 +10,7 @@ var StationSchema = Schema({
     location: {
       x: Number,
       y: Number,
-      z: Number,
+      z: Number
     },
     system: String,
     commodities:[{

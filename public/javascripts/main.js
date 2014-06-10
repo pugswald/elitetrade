@@ -135,13 +135,37 @@ function init(){
   });
   // Send message form binding
   $('#message-form').submit(sendMessage);
+    // Form bindings
+    if (is_admin){
+        $('#station-form').submit(sendStation);
+        $('#station-list').dataTable({
+            "processing": true,
+            "serverSide": true,
+            "ajax": "/station"
+        });
+        $('#station-list').on( 'click', 'tr', function() {
+            var rowData = $('#station-list').DataTable().row( this ).data();
+            console.log(rowData);
+        });
+    }
   selectPane('#find-route');
   // Kick off expire loop
   updateExpireLoop();
   $('#page').fadeIn(1000);
 }
 
-
+function sendStation(e) {
+    var thisform = $('#station-form');
+    var name = thisform.find('input[name="name"]').val();
+    console.log('Creating new station '+name);
+    $.ajax({url:'/station',type:'put',data:thisform.serialize(),success: function(e){
+            console.log('Ran put for station');
+            console.log(e);
+            $('#station-list').DataTable().draw();
+        }
+    });
+    return false;
+}
 // Sends a message to users
 // This will create multiple PUTs to /message, one for each recipient
 function sendMessage(e) {
@@ -405,96 +429,6 @@ function loadMessages(){
       }
     }
   });
-}
-
-function decryptPrivateKey(){
-  // Open the please wait window and do decryption
-  // Close the please wait window when done
-  // This is done because the keys can not be stringified and decoded
-  // and the decryption will lock up the browser for a bit
-  if (decrypting){
-    //console.log('Already busy decrypting');
-    return;
-  }
-  decrypting = true;
-  $("#key-decrypt").dialog('open');
-  setTimeout(function(){
-    var pk_pass = window.sessionStorage.getItem("privatekeypass");
-    // If the user's private key has been loaded from the server yet
-    // not unlocked
-    if ((user.private_key) && (!openpgp.keyring.hasPrivateKey()) && (pk_pass)){
-      var success = openpgp.keyring.importPrivateKey(user.private_key,pk_pass);
-      if (success){
-        openpgp.keyring.store();
-        //console.log('Imported private key');
-        pk_clear=openpgp.keyring.exportPrivateKey(0).obj;
-        //console.log('pk clear is');
-        //console.log(pk_clear);
-        $('#password-status').text('');
-        $('#password-dialog').dialog('close');
-        openpgp.keyring.importPublicKey(user.public_key);
-        updateKeyManagement(false);
-        //loadMessages();
-      } else {
-        //console.log('Import failed');
-        $('#password-status').text('Unable to unlock key with password');
-      }
-    }  
-    if ((pk_clear)||(!openpgp.keyring.hasPrivateKey())||(!pk_pass)){
-      // Already done
-      //console.log('decrypt key: Nothing to do');
-      // TODO: Where to go from here?
-      
-    } else {
-      var pk = openpgp.keyring.exportPrivateKey(0).armored;
-      // Working algorithm
-      var pk_clear_tmp = openpgp.read_privateKey(pk)[0];
-      var success = pk_clear_tmp.privateKeyPacket.decryptSecretMPIs(pk_pass);
-      if (success) {
-        pk_clear=pk_clear_tmp;
-        //console.log('pk clear is');
-        //console.log(pk_clear);
-        updateKeyManagement(false);
-        //loadMessages();
-        $('#password-dialog').dialog('close');
-      //updateKeyManagement(false);  // This should be handled by calling routine
-      } else {
-        $('#password-status').text('Unable to unlock key with password');
-        $('#password-dialog').dialog('open');
-      }
-      //console.log('Finished decrypting private key');
-    }
-    decrypting=false;
-    $("#key-decrypt").dialog('close');
-  },50);
-}
-
-/**
- * searches all public keys in the keyring matching the user ids
- * @param {publicKeys} The array of public keys
- * @param {userIds[]} The array of userIds to find
- * @return {{userId:openpgp_msg_publickey}} The public keys associated with provided user ids
- */
-function getPublicKeysForUserIds(userIds) {
-  var publicKeys = openpgp.keyring.publicKeys;
-  var results = {};
-  for (var i =0; i < publicKeys.length; i++) {
-    for (var j = 0; j < publicKeys[i].obj.userIds.length; j++) {
-      for (var k = 0; k < userIds.length; k++) {
-        if (publicKeys[i].obj.userIds[j].text == userIds[k]){
-          results[userIds[k]] = publicKeys[i];
-          break;
-        }
-      }
-    }
-  }
-  return results;
-}
-
-function attemptKeyDecrypt(){
-  // Helper function so hitting enter after password will trigger decryption
-  window.sessionStorage.setItem('privatekeypass',$("#password-dialog input").val());
-  decryptPrivateKey();
 }
 
 function addFriend(friend){
