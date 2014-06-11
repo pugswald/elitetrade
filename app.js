@@ -118,6 +118,7 @@ app.post('/user', user.user_post);
 app.delete('/user', user.user_delete);
 app.put('/station', station.put);
 app.get('/station', station.get);
+app.delete('/station', station.delete);
 //app.get('/invite', user.user_invite);
 
 https.createServer(mycfg.credentials,app).listen(app.get('port'), function(){

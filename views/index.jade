@@ -73,6 +73,7 @@ block content
         if is_admin
             div#station-admin(style="display:none;")
                 form#station-form
+                    input(name="id",type="hidden")
                     table
                         tr
                             th Name
@@ -96,12 +97,13 @@ block content
                                 TBD
                         tr
                             td(colspan="6")
-                                button(type="submit") Create Station
+                                button(type="submit") Create New Station
                                 button(type="submit") Commit Changes
-                                button(type="submit") Delete Station
+                                button#station-delete-button Delete Station
                 table#station-list
                     thead
                         tr
+                            th ID
                             th Name
                             th System
                             th X

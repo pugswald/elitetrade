@@ -138,14 +138,26 @@ function init(){
     // Form bindings
     if (is_admin){
         $('#station-form').submit(sendStation);
+        $('#station-delete-button').click(deleteStation);
         $('#station-list').dataTable({
             "processing": true,
             "serverSide": true,
-            "ajax": "/station"
+            "ajax": "/station",
+            order: [1,'asc'],
+            columns: [{ "visible": false }, null, null, null, null, null, { "visible": false }]
         });
         $('#station-list').on( 'click', 'tr', function() {
             var rowData = $('#station-list').DataTable().row( this ).data();
-            console.log(rowData);
+            if (rowData) { // Clicking outside of data form still triggers this
+                var thisform = $('#station-form');
+                thisform.find('input[name="id"]').val(rowData[0]);
+                thisform.find('input[name="name"]').val(rowData[1]);
+                thisform.find('input[name="system"]').val(rowData[2]);
+                thisform.find('input[name="x"]').val(rowData[3]);
+                thisform.find('input[name="y"]').val(rowData[4]);
+                thisform.find('input[name="z"]').val(rowData[5]);
+                console.log(rowData);
+            }
         });
     }
   selectPane('#find-route');
@@ -160,6 +172,18 @@ function sendStation(e) {
     console.log('Creating new station '+name);
     $.ajax({url:'/station',type:'put',data:thisform.serialize(),success: function(e){
             console.log('Ran put for station');
+            console.log(e);
+            $('#station-list').DataTable().draw();
+        }
+    });
+    return false;
+}
+function deleteStation(e) {
+    var thisform = $('#station-form');
+    var name = thisform.find('input[name="name"]').val();
+    console.log('Deleting station '+name);
+    $.ajax({url:'/station',type:'delete',data:thisform.serialize(),success: function(e){
+            console.log('Ran delete for station');
             console.log(e);
             $('#station-list').DataTable().draw();
         }
