@@ -127,18 +127,11 @@ function init(){
     //console.log(e.target.id);
     selectPane(e.target.value);
   });
-  // Start decryption on enter in password field
-  $("#password-dialog input").keypress(function (e) {
-    if (e.which == 13) {
-      attemptKeyDecrypt();
-    }
-  });
-  // Send message form binding
-  $('#message-form').submit(sendMessage);
-    // Form bindings
-    if (is_admin){
+    // Form bindings for station
+    if (is_admin == 'true'){
         $('#station-form').submit(sendStation);
         $('#station-delete-button').click(deleteStation);
+        clearStationForm();
         $('#station-list').dataTable({
             "processing": true,
             "serverSide": true,
@@ -147,23 +140,41 @@ function init(){
             columns: [{ "visible": false }, null, null, null, null, null, { "visible": false }]
         });
         $('#station-list').on( 'click', 'tr', function() {
-            var rowData = $('#station-list').DataTable().row( this ).data();
-            if (rowData) { // Clicking outside of data form still triggers this
-                var thisform = $('#station-form');
-                thisform.find('input[name="id"]').val(rowData[0]);
-                thisform.find('input[name="name"]').val(rowData[1]);
-                thisform.find('input[name="system"]').val(rowData[2]);
-                thisform.find('input[name="x"]').val(rowData[3]);
-                thisform.find('input[name="y"]').val(rowData[4]);
-                thisform.find('input[name="z"]').val(rowData[5]);
-                console.log(rowData);
+            if ( $(this).hasClass('selected') ) {
+                $(this).removeClass('selected');
+                clearStationForm();
+                //$('#station-delete-button').button("option", "disabled", true);
+            } else {
+                $('#station-list tr.selected').removeClass('selected');
+                $(this).addClass('selected');
+                $('#station-delete-button').button("option", "disabled", false);
+                $('#station-put-button').button("option", "label", "Modify station");
+                //console.log( $('#station-delete-button'));
+                var rowData = $('#station-list').DataTable().row( this ).data();
+                if (rowData) { // Clicking outside of data form still triggers this
+                    var thisform = $('#station-form');
+                    thisform.find('input[name="id"]').val(rowData[0]);
+                    thisform.find('input[name="name"]').val(rowData[1]);
+                    thisform.find('input[name="system"]').val(rowData[2]);
+                    thisform.find('input[name="x"]').val(rowData[3]);
+                    thisform.find('input[name="y"]').val(rowData[4]);
+                    thisform.find('input[name="z"]').val(rowData[5]);
+                    console.log(rowData);
+                }
             }
         });
+        selectPane('#station-admin');
+    } else {
+        selectPane('#find-route');
     }
-  selectPane('#find-route');
-  // Kick off expire loop
-  updateExpireLoop();
-  $('#page').fadeIn(1000);
+    $('#page').fadeIn(1000);
+}
+
+function clearStationForm(){
+    $('#station-form')[0].reset();
+    $('#station-admin-error').text("");
+    $('#station-delete-button').button("option", "disabled", true);
+    $('#station-put-button').button("option", "label", "Create station");
 }
 
 function sendStation(e) {
@@ -173,7 +184,12 @@ function sendStation(e) {
     $.ajax({url:'/station',type:'put',data:thisform.serialize(),success: function(e){
             console.log('Ran put for station');
             console.log(e);
-            $('#station-list').DataTable().draw();
+            if ( e.error ) {
+                $('#station-admin-error').text("Error: "+e.error);
+            } else {
+                clearStationForm()
+                $('#station-list').DataTable().draw();
+            }
         }
     });
     return false;
@@ -185,7 +201,12 @@ function deleteStation(e) {
     $.ajax({url:'/station',type:'delete',data:thisform.serialize(),success: function(e){
             console.log('Ran delete for station');
             console.log(e);
-            $('#station-list').DataTable().draw();
+            if ( e.error ) {
+                $('#station-admin-error').text("Error: "+e.error);
+            } else {
+                clearStationForm()
+                $('#station-list').DataTable().draw();
+            }
         }
     });
     return false;

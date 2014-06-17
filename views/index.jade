@@ -71,42 +71,4 @@ block content
             include about
 
         if is_admin
-            div#station-admin(style="display:none;")
-                form#station-form
-                    input(name="id",type="hidden")
-                    table
-                        tr
-                            th Name
-                            th System
-                            th X
-                            th Y
-                            th Z
-                            th Commodities
-                        tr
-                            td 
-                                input(name="name")
-                            td 
-                                input(name="system")
-                            td 
-                                input(name="x",size="5")
-                            td
-                                input(name="y",size="5")
-                            td
-                                input(name="z",size="5")
-                            td
-                                TBD
-                        tr
-                            td(colspan="6")
-                                button(type="submit") Create New Station
-                                button(type="submit") Commit Changes
-                                button#station-delete-button Delete Station
-                table#station-list
-                    thead
-                        tr
-                            th ID
-                            th Name
-                            th System
-                            th X
-                            th Y
-                            th Z
-                            th Commodities
+            include station-admin

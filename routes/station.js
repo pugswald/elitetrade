@@ -1,8 +1,7 @@
 /*
  * GET stations for tabledata
- * PUT create new station
+ * PUT create or modify station
  * DELETE delete station
- * TODO: POST modify station 
  */
 var mongoose = require('mongoose');
 var CommodityModel = mongoose.model('CommodityModel');
@@ -94,37 +93,65 @@ exports.delete = function(req, res){
 
     
 exports.put = function(req, res){
-    requireAdmin(req, res, function( req, res) {   
-        StationModel.findOne( {name:req.body.name}, function( err, station ){
-            if (station){
-                console.log(station);
-                res.json({error:'Station already exists'});
-            } else {
-                var newname = req.body.name;
-                newname = newname.replace(/^\s*/,'');
-                newname = newname.replace(/\s*$/,'');
-                if (! newname){
-                    res.json({error:'Blank station name'});
-                    return;
+    requireAdmin(req, res, function( req, res) {  
+        var newname = req.body.name;
+        newname = newname.replace(/^\s*/,'');
+        newname = newname.replace(/\s*$/,'');
+        if (! newname){
+            res.json({error:'Blank station name'});
+            return;
+        }
+        if (req.body.id) {
+            console.log('ID passed in '+req.body.id);
+            // Modify 
+            StationModel.findOne( {name:req.body.name}, function( err, station ){
+                if (station && station.id != req.body.id) {
+                    console.log(station);
+                    res.json({error:'Station already exists'});
+                } else {
+                    StationModel.findByIdAndUpdate(req.body.id, {
+                        name: newname,
+                        location: { // Let mongoose validate this data - apparently null is ok
+                            x: req.body.x,
+                            y: req.body.y,
+                            z: req.body.z
+                        },
+                        system: req.body.system
+                        }, function (err) {
+                            if (err) {
+                                res.json({error:err});
+                            } else {
+                                res.json({success:true});
+                            }
+                        }                    
+                    );
                 }
-                var newstation = new StationModel({
-                    name: newname,
-                    location: { // Let mongoose validate this data - apparently null is ok
-                        x: req.body.x,
-                        y: req.body.y,
-                        z: req.body.z
-                    },
-                    system: req.body.system
-                });
-                newstation.save( function (err) {
-                    if (err) {
-                        res.json({error:err});
-                    } else {
-                        res.json({success:true});
-                    }
-                });
-            }
-        });
+            });
+        } else {
+            StationModel.findOne( {name:req.body.name}, function( err, station ){
+                if (station) {
+                    console.log(station);
+                    res.json({error:'Station already exists'});
+                } else {
+                    var newstation = new StationModel({
+                        name: newname,
+                        location: { // Let mongoose validate this data - apparently null is ok
+                            x: req.body.x,
+                            y: req.body.y,
+                            z: req.body.z
+                        },
+                        system: req.body.system
+                    });
+                    newstation.save( function (err) {
+                        if (err) {
+                            res.json({error:err});
+                        } else {
+                            res.json({success:true});
+                        }
+                    });
+                }
+            });
+        }
     });
 };
 
