@@ -127,6 +127,9 @@ function init(){
     //console.log(e.target.id);
     selectPane(e.target.value);
   });
+  
+    // Station autocomplete widgets
+    $('input[name="station"]').autocomplete({ source: "/station" });
     // Form bindings for station
     if (is_admin == 'true'){
         $('#station-form').submit(sendStation);

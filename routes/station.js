@@ -27,11 +27,27 @@ var requireAdmin = function( req, res, callback ) {
 
 exports.get = function(req, res){
     // Assumes data is consumed by a datatable.  Server-side view modifications apply
-    //   name
-    //   page
-    //   rpp
     // On any deviation from the query format of datatable, it will return the first 
     //   10 stations alphabetically
+    // Adding the query term will cause it to do a name search and return a list of matching station names
+    if (req.query.term) {
+        StationModel.find({ name: {$regex: '^'+req.query.term} })
+        .select('name')
+        .sort('field name')
+        .exec(function (err,stations) {
+            if (!err) {
+                var data = []
+                for (var i=0; i<stations.length; ++i){
+                    var s = stations[i];
+                    data.push( s.name);                        
+                }
+                res.json(data);
+            } else {
+                res.json({error:err});
+            }
+        });
+        return
+    }
     console.log(req.query);
     var q = {};
     var limit = 10;
