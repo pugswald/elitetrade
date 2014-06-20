@@ -6,6 +6,7 @@ var mongoose = require('mongoose'),
 */
 var CommoditySchema = Schema({
     name: String,
+    name_lower: String,
     galavg: Number
 });
 

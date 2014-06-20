@@ -1,0 +1,27 @@
+script(src='/javascripts/commodity.js')
+
+div#commodity-admin(style="display:none;")
+    form#commodity-form
+        input.hide(name="id")
+        table
+            tr
+                th Commodity Name
+                th Galactic Avg
+            tr
+                td 
+                    input(name="name")
+                td 
+                    input(name="galavg",size="10")
+            tr
+                td(colspan="6")
+                    button#commodity-put-button(type="submit") Create New Commodity
+                    button#commodity-delete-button Delete Commodity
+            tr
+                td(colspan="6")
+                    div#commodity-admin-error.error
+    table#commodity-list.display
+        thead
+            tr
+                th ID
+                th Commodity Name
+                th Galactic Avg

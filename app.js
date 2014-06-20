@@ -108,17 +108,21 @@ app.configure(function(){
 var routes=require('./routes')
   ,user=require('./routes/user')
   ,station=require('./routes/station')
+  ,commodity=require('./routes/commodity')
   ,trade=require('./routes/trade');
 app.get('/', routes.index);
-app.get('/trade', trade.trade_get);
-app.put('/trade', trade.trade_put);
-app.delete('/trade/:id', trade.trade_delete);
+app.get('/trade', trade.get);
+app.put('/trade', trade.put);
+app.delete('/trade/:id', trade.delete);
 app.get('/user', user.user_get);
 app.post('/user', user.user_post);
 app.delete('/user', user.user_delete);
 app.put('/station', station.put);
 app.get('/station', station.get);
 app.delete('/station', station.delete);
+app.put('/commodity', commodity.put);
+app.get('/commodity', commodity.get);
+app.delete('/commodity', commodity.delete);
 //app.get('/invite', user.user_invite);
 
 https.createServer(mycfg.credentials,app).listen(app.get('port'), function(){

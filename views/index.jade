@@ -13,6 +13,8 @@ block content
             if is_admin
                 input(type="radio",id="sa-menu",name="menu",value="#station-admin")
                 label(for="sa-menu") Station Admin
+                input(type="radio",id="co-menu",name="menu",value="#commodity-admin")
+                label(for="co-menu") Commodity Admin
             input(type="radio",id="find-menu",name="menu",value="#find-route")
             label(for="find-menu") Find Route
             input(type="radio",id="view-menu",name="menu",value="#view-trades")
@@ -28,33 +30,9 @@ block content
             input(type="radio",id="about-menu",name="menu",value="#about")
             label(for="about-menu") About
     div#content
-        div#enter-trade(style="display:none;")
-            form#trade-form
-                table
-                    tr
-                        th Station
-                        th Commodity
-                        th Amount
-                        th Price Each
-                        th Bought
-                        th Sold
-                    tr
-                        td 
-                            input(name="station")
-                        td 
-                            input#commodity
-                        td 
-                            input#amount(size="5")
-                        td
-                            input#price(size="5")
-                        td
-                            input(type="radio",name="action",value="bought",checked)
-                        td
-                            input(type="radio",name="action",value="sold")
-                    tr
-                        td(colspan="6")
-                            button(type="submit") Enter Trade
-        
+        if userId
+            div#enter-trade(style="display:none;")
+                include trade
 
         div#view-trades(style="display:none;")
             Various controls, filters, ability to delete
@@ -72,3 +50,6 @@ block content
 
         if is_admin
             include station-admin
+            include commodity-admin
+            
+            

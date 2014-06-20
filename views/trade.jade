@@ -1,0 +1,42 @@
+script(src='/javascripts/trade.js')
+
+
+form#trade-form
+    table
+        tr
+            th Station
+            th Commodity
+            th Amount
+            th Price Each
+            th Bought
+            th Sold
+        tr
+            td 
+                input(name="station")
+            td 
+                input(name="commodity")
+            td 
+                input(name="amount",size="5")
+            td
+                input(name="price",size="5")
+            td
+                input(type="radio",name="action",value="bought",checked)
+            td
+                input(type="radio",name="action",value="sold")
+        tr
+            td(colspan="6")
+                button#trade-put-button Enter New Trade
+                button#trade-delete-button Delete Trade
+    table#trade-list.display
+        thead
+            tr
+                th ID
+                th User
+                th Time
+                th Station
+                th Commodity
+                th Amount
+                th Price
+                th Action
+                th Profit
+

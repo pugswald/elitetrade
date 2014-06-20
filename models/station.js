@@ -7,6 +7,7 @@ var mongoose = require('mongoose'),
 */
 var StationSchema = Schema({
     name: String,
+    name_lower: String, // For indexed case insensitive searches
     location: {
       x: Number,
       y: Number,

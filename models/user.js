@@ -6,8 +6,10 @@ var mongoose = require('mongoose'),
 * Schema
 */
 var UserSchema = Schema({
+    handle: String,
     last_updated: Date,
     facebook_id: String,
+    // TODO: Clean this crap out of here, don't care about it.
     facebook: {},
     last_friend_check: Date,  // Future friend updates
     friends: [ { type: ObjectId, ref: 'UserModel'} ],

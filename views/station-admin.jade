@@ -1,0 +1,40 @@
+script(src='/javascripts/station.js')
+
+div#station-admin(style="display:none;")
+    form#station-form
+        input.hide(name="id")
+        table
+            tr
+                th Name
+                th System
+                th X
+                th Y
+                th Z
+            tr
+                td 
+                    input(name="name")
+                td 
+                    input(name="system")
+                td 
+                    input(name="x",size="5")
+                td
+                    input(name="y",size="5")
+                td
+                    input(name="z",size="5")
+            tr
+                td(colspan="6")
+                    button#station-put-button(type="submit") Create New Station
+                    button#station-delete-button Delete Station
+            tr
+                td(colspan="6")
+                    div#station-admin-error.error
+    table#station-list.display
+        thead
+            tr
+                th ID
+                th Name
+                th System
+                th X
+                th Y
+                th Z
+                th Commodities
